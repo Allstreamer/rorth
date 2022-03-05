@@ -1,4 +1,4 @@
-![Compatibility Ep.1](https://img.shields.io/badge/Compatibility-Ep.1-brightgreen)
+![Compatibility Ep.1](https://img.shields.io/badge/Compatibility-Ep.2-brightgreen)
 ![Lines of code](https://img.shields.io/tokei/lines/github/Allstreamer/rorth)
 
 # Rorth

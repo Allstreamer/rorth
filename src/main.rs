@@ -1,9 +1,10 @@
 mod program_simulator;
 mod program_parser;
+mod token;
 
 use std::path::PathBuf;
 use clap::Parser;
-use program_simulator::{ProgramSimulator, ProgramSimulationError, Token};
+use program_simulator::{ProgramSimulator, ProgramSimulationError};
 use program_parser::{ProgramParsingError, ProgramParser};
 use thiserror::Error;
 

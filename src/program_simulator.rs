@@ -1,17 +1,15 @@
+use std::string::String;
 use thiserror::Error;
-
-#[derive(Debug, Copy, Clone)]
-pub enum Token {
-    PUSH(u64),
-    PLUS,
-    MINUS,
-    DUMP,
-}
+use crate::token::{Token, TokenValue};
 
 #[derive(Error, Debug)]
 pub enum ProgramSimulationError {
     #[error("The Stack did not contain enougth Values to perform the Operation")]
-    StackFillError()
+    StackFillError {
+        file: String,
+        token: TokenValue,
+        line: usize
+    }
 }
 
 pub struct ProgramSimulator {
@@ -30,22 +28,22 @@ impl ProgramSimulator {
     pub fn simulate_program(&mut self) -> Result<(), ProgramSimulationError> {
         let program = self.program.clone();
         for op in program {
-            match op {
-                Token::PUSH(x) => {
+            match op.token_value {
+                TokenValue::PUSH(x) => {
                     self.stack.push(x);
                 },
-                Token::PLUS => {
-                    let a = self.pop_stack()?;
-                    let b = self.pop_stack()?;
+                TokenValue::PLUS => {
+                    let a = self.pop_stack(&op)?;
+                    let b = self.pop_stack(&op)?;
                     self.stack.push(a+b);
                 },
-                Token::MINUS => {
-                    let a = self.pop_stack()?;
-                    let b = self.pop_stack()?;
+                TokenValue::MINUS => {
+                    let a = self.pop_stack(&op)?;
+                    let b = self.pop_stack(&op)?;
                     self.stack.push(b-a);
                 },
-                Token::DUMP => {
-                    let value = self.pop_stack()?;
+                TokenValue::DUMP => {
+                    let value = self.pop_stack(&op)?;
                     println!("{}", value);
                 }
             }
@@ -53,10 +51,14 @@ impl ProgramSimulator {
         Ok(())
     }
 
-    pub fn pop_stack(&mut self) -> Result<u64, ProgramSimulationError> {
+    pub fn pop_stack(&mut self, token: &Token) -> Result<u64, ProgramSimulationError> {
         return match self.stack.pop() {
             Some(v) => Ok(v),
-            None => Err(ProgramSimulationError::StackFillError()),
+            None => Err(ProgramSimulationError::StackFillError {
+                file: token.file.clone(),
+                token: token.token_value,
+                line: token.line
+            }),
         }
     }
 }
