@@ -14,12 +14,12 @@ pub enum ProgramSimulationError {
     StackFillError()
 }
 
-pub struct Program {
+pub struct ProgramSimulator {
     stack: Vec<u64>,
     program: Vec<Token>
 }
 
-impl Program {
+impl ProgramSimulator {
     pub fn new(program: Vec<Token>) -> Self {
         Self {
             program,
