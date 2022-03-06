@@ -1,4 +1,22 @@
-34 35  + .
-10 20 +
-10 20 +
-= .
+// This is a comment
+
+100 .       // Should print 100
+34 35 + .   // Should print 69
+500 80 - .  // Should print 420
+
+13 970 = .  // Should print 0
+77 77 = .   // Should print 1
+
+1 if        // Should always print 69
+    69 .
+end
+
+512 12 = if // Should never print anything
+    2 .
+end
+
+10 10 = if  // Should always print 3
+    21 21 = if
+        3 .
+    end
+end

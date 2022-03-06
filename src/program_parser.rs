@@ -24,6 +24,8 @@ pub enum ProgramParsingError {
 
     #[error("Couldn't parse path")]
     InvalidFilePath(),
+    #[error("Couldn't parse path")]
+    IfMissingEnd(),
 }
 
 pub struct ProgramParser {
@@ -39,12 +41,19 @@ impl ProgramParser {
 
     pub fn load_program(&self) -> Result<Vec<Token>, ProgramParsingError> {
         let reader = BufReader::new(
-                File::open(self.path.clone())?
-            );
+            File::open(self.path.clone())?
+        );
+        Ok(self.cross_reference_blocks(self.lex_program(reader)?)?)
+    }
 
+    /// Convert BufReader into Tokens
+    pub fn lex_program(&self, reader: BufReader<File>) -> Result<Vec<Token>, ProgramParsingError> {
         let mut tokens: Vec<Token> = Vec::new();
         for (index,line) in reader.lines().enumerate() {
             for word in line?.split_whitespace() {
+                if word.starts_with("//") {
+                    break;
+                }
                 let token = match self.word_to_token(word) {
                     Ok(v) => v,
                     Err(e) => {
@@ -79,12 +88,38 @@ impl ProgramParser {
         Ok(tokens)
     }
 
+    /// Fill out If values
+    pub fn cross_reference_blocks(&self, mut program: Vec<Token>) -> Result<Vec<Token>, ProgramParsingError> {
+        let mut stack: Vec<u64> = Vec::new();
+
+        for pos in 0..program.len() {
+            let op = &program[pos];
+            match op.token_value {
+                TokenValue::IF(_v) => {
+                    stack.push(pos as u64);
+                },
+                TokenValue::END => {
+                    let if_pos = match stack.pop() {
+                        Some(v) => v,
+                        None => {return Err(ProgramParsingError::IfMissingEnd())}
+                    };
+                    program[if_pos as usize].token_value =
+                        TokenValue::IF(Some(pos as u64));
+                },
+                _ => {}
+            }
+        }
+        Ok(program)
+    }
+
     fn word_to_token(&self, word: &str) -> Result<TokenValue, ProgramParsingError> {
         Ok(match word {
-            "+" => {TokenValue::PLUS},
-            "-" => {TokenValue::MINUS},
-            "." => {TokenValue::DUMP},
-            "=" => {TokenValue::EQUAL},
+            "+" => TokenValue::PLUS,
+            "-" => TokenValue::MINUS,
+            "." => TokenValue::DUMP,
+            "=" => TokenValue::EQUAL,
+            "if" => TokenValue::IF(None),
+            "end" => TokenValue::END,
             _ => {
                 if !word.chars().all(|x| x.is_numeric()) {
                     return Err(ProgramParsingError::InvalidToken(String::new(), 0));

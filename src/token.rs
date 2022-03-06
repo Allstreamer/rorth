@@ -6,9 +6,12 @@ pub enum TokenValue {
     PLUS,
     MINUS,
     DUMP,
-    EQUAL
+    EQUAL,
+    IF(Option<u64>),
+    END
 }
 
+/// Token Value Wrapping Struct for error reporting
 #[derive(Debug, Clone)]
 pub struct Token {
     pub token_value: TokenValue,

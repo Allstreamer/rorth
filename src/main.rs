@@ -1,3 +1,5 @@
+//! Rorth is a Porth-Simulator written in Rust.
+
 mod program_simulator;
 mod program_parser;
 mod token;
