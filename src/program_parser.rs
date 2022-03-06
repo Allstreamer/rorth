@@ -84,6 +84,7 @@ impl ProgramParser {
             "+" => {TokenValue::PLUS},
             "-" => {TokenValue::MINUS},
             "." => {TokenValue::DUMP},
+            "=" => {TokenValue::EQUAL},
             _ => {
                 if !word.chars().all(|x| x.is_numeric()) {
                     return Err(ProgramParsingError::InvalidToken(String::new(), 0));

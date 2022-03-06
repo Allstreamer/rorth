@@ -46,6 +46,11 @@ impl ProgramSimulator {
                     let value = self.pop_stack(&op)?;
                     println!("{}", value);
                 }
+                TokenValue::EQUAL => {
+                    let a = self.pop_stack(&op)?;
+                    let b = self.pop_stack(&op)?;
+                    self.stack.push((a == b) as u64);
+                }
             }
         }
         Ok(())

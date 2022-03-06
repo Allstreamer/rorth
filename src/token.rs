@@ -6,6 +6,7 @@ pub enum TokenValue {
     PLUS,
     MINUS,
     DUMP,
+    EQUAL
 }
 
 #[derive(Debug, Clone)]
