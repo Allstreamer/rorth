@@ -1,7 +1,7 @@
 [![made-with-rust](https://img.shields.io/badge/Made%20with-Rust-1f425f.svg)](https://www.rust-lang.org/)
 ![Compatibility Ep.1](https://img.shields.io/badge/Compatibility-Ep.2-brightgreen)
 ![GitHub commits](https://badgen.net/github/commits/Allstreamer/rorth)
-![Lines of code](https://img.shields.io/tokei/lines/github/Allstreamer/rorth)
+![](https://tokei.rs/b1/github/Allstreamer/rorth)
 ![code Size](https://img.shields.io/github/languages/code-size/allstreamer/rorth)
 
 # Rorth
