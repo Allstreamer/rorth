@@ -82,6 +82,12 @@ impl ProgramSimulator {
                         ProgramAction::Step
                     }
                 },
+                TokenValue::ELSE(jump_positon) => {
+                    ProgramAction::Jump(match jump_positon {
+                        Some(v) => v,
+                        None => return Err(ProgramSimulationError::IfHasNoEndAtRuntimeError()),
+                    } as usize)
+                },
                 TokenValue::END => {
                     ProgramAction::Step
                 },

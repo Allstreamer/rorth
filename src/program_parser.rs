@@ -26,6 +26,8 @@ pub enum ProgramParsingError {
     InvalidFilePath(),
     #[error("Couldn't parse path")]
     IfMissingEnd(),
+    #[error("If can only match else & end")]
+    IfMatchError(),
 }
 
 pub struct ProgramParser {
@@ -90,21 +92,39 @@ impl ProgramParser {
 
     /// Fill out If values
     pub fn cross_reference_blocks(&self, mut program: Vec<Token>) -> Result<Vec<Token>, ProgramParsingError> {
-        let mut stack: Vec<u64> = Vec::new();
+        let mut stack: Vec<usize> = Vec::new();
 
         for pos in 0..program.len() {
             let op = &program[pos];
             match op.token_value {
                 TokenValue::IF(_v) => {
-                    stack.push(pos as u64);
+                    stack.push(pos);
                 },
-                TokenValue::END => {
+                TokenValue::ELSE(_v) => {
                     let if_pos = match stack.pop() {
                         Some(v) => v,
                         None => {return Err(ProgramParsingError::IfMissingEnd())}
                     };
                     program[if_pos as usize].token_value =
-                        TokenValue::IF(Some(pos as u64));
+                        TokenValue::IF(Some((pos + 1) as u64));
+                    stack.push(pos);
+                },
+                TokenValue::END => {
+                    let block_pos = match stack.pop() {
+                        Some(v) => v,
+                        None => {return Err(ProgramParsingError::IfMissingEnd())}
+                    };
+                    match program[block_pos as usize].token_value {
+                        TokenValue::IF(_v) => {
+                            program[block_pos as usize].token_value =
+                                TokenValue::IF(Some((pos) as u64));
+                        }
+                        TokenValue::ELSE(_v) => {
+                            program[block_pos as usize].token_value =
+                                TokenValue::ELSE(Some((pos) as u64));
+                        }
+                        _ => return Err(ProgramParsingError::IfMatchError())
+                    }
                 },
                 _ => {}
             }
@@ -119,6 +139,7 @@ impl ProgramParser {
             "." => TokenValue::DUMP,
             "=" => TokenValue::EQUAL,
             "if" => TokenValue::IF(None),
+            "else" => TokenValue::ELSE(None),
             "end" => TokenValue::END,
             _ => {
                 if !word.chars().all(|x| x.is_numeric()) {

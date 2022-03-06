@@ -7,7 +7,7 @@ authors = ["Allstreamer"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [profile.release]
-strip = true
+
 
 [dependencies]
 thiserror = "1.0.30"

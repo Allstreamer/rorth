@@ -20,3 +20,9 @@ end
         3 .
     end
 end
+
+20 21 = if
+    55 .
+else
+    22 .
+end

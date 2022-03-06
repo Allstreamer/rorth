@@ -8,6 +8,7 @@ pub enum TokenValue {
     DUMP,
     EQUAL,
     IF(Option<u64>),
+    ELSE(Option<u64>),
     END
 }
 
